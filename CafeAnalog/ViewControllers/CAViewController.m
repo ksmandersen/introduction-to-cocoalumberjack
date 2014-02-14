@@ -8,18 +8,17 @@
 
 #import "CAViewController.h"
 #import "UIImage+CAAnimatedGif.h"
+#import "CAAPI.h"
 
 #import <AFNetworking/AFNetworking.h>
 
-typedef NS_ENUM(NSUInteger, CACafeStatus) {
-    CACafeStatusOpen,
-    CACafeStatusClosed
-};
-
-@interface CAViewController ()
+@interface CAViewController () {
+    NSTimer *_rotatingTimer;
+}
 
 @property (nonatomic, weak) IBOutlet UIImageView *imageView;
 @property (nonatomic, weak) IBOutlet UILabel *statusLabel;
+@property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 @property (nonatomic, assign) CACafeStatus currentStatus;
 
@@ -31,27 +30,38 @@ typedef NS_ENUM(NSUInteger, CACafeStatus) {
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
 
-    NSString *urlString = @"http://cafeanalog.dk/";
+    [self updateData];
+}
 
-    __weak CAViewController *weakSelf = self;
-    AFHTTPRequestOperationManager *requestManager = [AFHTTPRequestOperationManager manager];
-    requestManager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    [requestManager GET:urlString
-             parameters:nil
-                success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                    CAViewController *strongSelf = weakSelf;
-                    
-                    NSString *htmlString = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-                    DDLogVerbose(@"Got response: %@", htmlString);
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        strongSelf.currentStatus = [self statusForPageContent:htmlString];
-                        [strongSelf updateWithCurrentStatus];
-                    });
-                }
-                failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                    DDLogError(@"Error when fetching status: %@, %@", error, error.userInfo);
-                }];
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)willEnterForeground:(NSNotification *)notification {
+    DDLogDebug(@"Entered foreground!");
+    
+    [self updateData];
+}
+
+- (void)updateData {
+    CAAPI *api = [CAAPI sharedAPI];
+    if (!api.lastUpdatedAt || [[NSDate date] timeIntervalSince1970] - [api.lastUpdatedAt timeIntervalSince1970] > 120) {
+        DDLogDebug(@"Updating data");
+        [self.activityIndicator startAnimating];
+        [api checkStatusWithCompletion:^(CACafeStatus status, NSError *error) {
+            self.currentStatus = status;
+            
+            [self.activityIndicator stopAnimating];
+            if (_rotatingTimer) {
+                [_rotatingTimer invalidate];
+            }
+            
+            [self updateWithCurrentStatus];
+        }];
+    }
 }
 
 - (UIImage *)randomImageForStatus:(CACafeStatus)status {
@@ -65,16 +75,9 @@ typedef NS_ENUM(NSUInteger, CACafeStatus) {
     return [UIImage ca_imageWithAnimatedGIFURL:url];
 }
 
-- (CACafeStatus)statusForPageContent:(NSString *)content {
-    BOOL open = ([content rangeOfString:@"We're Åpen!"].location != NSNotFound);
-    return open ? CACafeStatusOpen : CACafeStatusClosed;
-}
-
 - (void)updateWithCurrentStatus {
     NSString *status = (self.currentStatus == CACafeStatusOpen) ? @"Open" : @"Closed";
     UIImage *randomImage = [self randomImageForStatus:self.currentStatus];
-
-    DDLogVerbose(@"Updating view for status: %@", status);
     
     [UIView animateWithDuration:0.5f animations:^{
         [self.imageView setAlpha:0];
@@ -83,12 +86,12 @@ typedef NS_ENUM(NSUInteger, CACafeStatus) {
         [self.imageView setImage:randomImage];
         [self.statusLabel setText:status];
         
-        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:5.0f
+        _rotatingTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f
                                                           target:self
                                                         selector:@selector(updateWithCurrentStatus)
                                                         userInfo:nil
                                                          repeats:NO];
-        [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+        [[NSRunLoop mainRunLoop] addTimer:_rotatingTimer forMode:NSDefaultRunLoopMode];
         
         [UIView animateWithDuration:1.0f animations:^{
             [self.imageView setAlpha:1];

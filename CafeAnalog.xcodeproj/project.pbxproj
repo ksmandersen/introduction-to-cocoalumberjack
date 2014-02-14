@@ -15,6 +15,7 @@
 		3260FB4EBC4D87B797C2D67B /* CAViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3260FA93E85F2801CDBBF848 /* CAViewController.m */; };
 		3260FB9CACDAC087AF44C3BE /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3260F7786D5C54F9A25FAC87 /* Main_iPhone.storyboard */; };
 		3260FC4F23A3EA6FCC8306F2 /* open2.gif in Resources */ = {isa = PBXBuildFile; fileRef = 3260F1B23430F1C248A492B1 /* open2.gif */; };
+		783D0CE518AE01A300FB517D /* CAAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 783D0CE418AE01A300FB517D /* CAAPI.m */; };
 		78543B8418AD2B1600427659 /* closed3.gif in Resources */ = {isa = PBXBuildFile; fileRef = 78543B8218AD2B1600427659 /* closed3.gif */; };
 		78543B8518AD2B1600427659 /* closed2.gif in Resources */ = {isa = PBXBuildFile; fileRef = 78543B8318AD2B1600427659 /* closed2.gif */; };
 		78D3AAA518ACC081009D11DD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78D3AAA418ACC081009D11DD /* Foundation.framework */; };
@@ -54,6 +55,8 @@
 		3260FF6DE302AECF05C63559 /* open3.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = open3.gif; sourceTree = "<group>"; };
 		3260FFCC0F26BAAEC7FD1623 /* closed1.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = closed1.gif; sourceTree = "<group>"; };
 		73330FCA82894E8393466C96 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		783D0CE318AE01A300FB517D /* CAAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAPI.h; sourceTree = "<group>"; };
+		783D0CE418AE01A300FB517D /* CAAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAAPI.m; sourceTree = "<group>"; };
 		78543B8218AD2B1600427659 /* closed3.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = closed3.gif; sourceTree = "<group>"; };
 		78543B8318AD2B1600427659 /* closed2.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = closed2.gif; sourceTree = "<group>"; };
 		78D3AAA118ACC081009D11DD /* CafeAnalog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CafeAnalog.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -175,6 +178,8 @@
 		78D3AAAA18ACC081009D11DD /* CafeAnalog */ = {
 			isa = PBXGroup;
 			children = (
+				783D0CE318AE01A300FB517D /* CAAPI.h */,
+				783D0CE418AE01A300FB517D /* CAAPI.m */,
 				78D3AAB318ACC081009D11DD /* CAAppDelegate.h */,
 				78D3AAB418ACC081009D11DD /* CAAppDelegate.m */,
 				78D3AABF18ACC081009D11DD /* Images.xcassets */,
@@ -360,6 +365,7 @@
 				78D3AAB118ACC081009D11DD /* main.m in Sources */,
 				3260F9D803DBFD65EEAD9537 /* UIImage+CAAnimatedGif.m in Sources */,
 				3260FB4EBC4D87B797C2D67B /* CAViewController.m in Sources */,
+				783D0CE518AE01A300FB517D /* CAAPI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
